@@ -8,7 +8,7 @@ module.exports = function() {
     // Helper method to get user by email
     function getUserByEmail(db, email, callback) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl FROM users\
+            sql: 'SELECT email FROM users\
                   WHERE email=@email',
             parameters: [
                 { name: 'email', value: email }
@@ -26,7 +26,7 @@ module.exports = function() {
     // Get all users
     router.get('/', function(req, res, next) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl FROM users',
+            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users',
             parameters: []
         };
 
@@ -42,7 +42,7 @@ module.exports = function() {
     // Get user by Id
     router.get('/:id', function(req, res, next) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl FROM users\
+            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
                   WHERE id=@id',
             parameters: [
                 { name: 'id', value: req.params.id }
@@ -70,13 +70,16 @@ module.exports = function() {
             }
 
             var query = {
-                sql: 'INSERT INTO users(email,  password,  firstName,  lastName)\
-                            VALUES (@email, @password, @firstName, @lastName);',
+                sql: 'INSERT INTO users(email, password, firstName, lastName, photoUrl, searchPreferences, status)\
+                            VALUES (@email, @password, @firstName, @lastName, @photoUrl, @searchPreferences, @status);',
                 parameters: [
                     { name: 'email', value: req.body.email },
                     { name: 'password', value: utils.md5(req.body.password) },
                     { name: 'firstName', value: req.body.firstName },
                     { name: 'lastName', value: req.body.lastName },
+                    { name: 'photoUrl', value: req.body.photoUrl },
+                    { name: 'searchPreferences', value: req.body.searchPreferences },
+                    { name: 'status', value: req.body.status }
                 ]
             };
 
