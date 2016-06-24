@@ -82,8 +82,7 @@ module.exports = function() {
 
             db.execute(query)
             .then(function (results) {
-                //res.json(results);
-                res.json({demo: "Modificado por PMG"});
+                res.json(results);
             })
             .catch(function (err) {
                res.json(400, err);
