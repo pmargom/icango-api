@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-
-module.exports = {
-    //"get": function (req, res, next) {
-    //}
-}
-=======
 var express = require('express');
 var utils = require('./utils');
 
