@@ -1,22 +1,4 @@
-// ----------------------------------------------------------------------------
-// Copyright (c) 2015 Microsoft Corporation. All rights reserved.
-// ----------------------------------------------------------------------------
 
-// This is a base-level Azure Mobile App SDK.
-var express = require('express'),
-<<<<<<< HEAD
-    azureMobileApps = require('azure-mobile-apps');
-=======
-    azureMobileApps = require('azure-mobile-apps'),
-    bodyParser = require('body-parser'),
-    usersApi = require('./api/users'),
-    loginApi = require('./api/login');
->>>>>>> ccff6c77172cfc8c268d9adc0e960786464c8daa
-
-// Set up a standard Express app
-var app = express();
-
-<<<<<<< HEAD
 // If you are producing a combined Web + Mobile app, then you should handle
 // anything like logging, registering middleware, etc. here
 
@@ -42,16 +24,4 @@ mobile.tables.initialize()
         app.use(mobile);    // Register the Azure Mobile Apps middleware
         app.listen(process.env.PORT || 3000);   // Listen for requests
     });
-=======
-var mobile = azureMobileApps(); 
-app.use(mobile);    // Register the Azure Mobile Apps middleware
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
-app.use('/api/v1/users', usersApi());
-app.use('/api/v1/login', loginApi());
-
-
-app.listen(process.env.PORT || 3000);   // Listen for requests
->>>>>>> ccff6c77172cfc8c268d9adc0e960786464c8daa
