@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 
-module.exports = {
-    //"get": function (req, res, next) {
-    //}
-}
-=======
 var express = require('express');
 var utils = require('./utils');
 
@@ -100,4 +94,4 @@ module.exports = function() {
 
     return router;
 };
->>>>>>> 84bc781431b21da4b8ccef9b0a400ee3ff951bab
+
