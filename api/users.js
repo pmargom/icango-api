@@ -22,6 +22,22 @@ module.exports = function() {
         });
     }
 
+    // Get all users
+    router.get('/', function(req, res, next) {
+        var query = {
+            sql: 'SELECT email, firstName, lastName, photoUrl FROM users',
+            parameters: []
+        };
+
+        req.azureMobile.data.execute(query)
+           .then(function (results) {
+               res.json({
+                   totalRows: results.length,
+                   data: results
+               })
+           });
+    });
+
     // Get user by Id
     router.get('/:id', function(req, res, next) {
         var query = {
