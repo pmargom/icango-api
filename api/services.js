@@ -2,7 +2,7 @@
 module.exports = function() {
    var router = express.Router();
 
-   // Get all users
+   // Get all services
    router.get('/', function(req, res, next) {
       var query = {
          sql: 'SELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services',
@@ -18,7 +18,7 @@ module.exports = function() {
          });
    });
 
-   // Create user
+   // Create service
    router.post('/', function(req, res, next) {
       var db = req.azureMobile.data;
 
