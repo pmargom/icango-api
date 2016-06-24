@@ -8,7 +8,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     usersApi = require('./api/users'),
     loginApi = require('./api/login'),
-    servicesApi = require('./ap1/services');
+    servicesApi = require('./api/services');
 
 // Set up a standard Express app
 var app = express();
