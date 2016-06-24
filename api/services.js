@@ -22,7 +22,7 @@ module.exports = function() {
    // Get service by Id
    router.get('/:id', function(req, res, next) {
       var query = {
-         sql: 'SSELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services\
+         sql: 'SELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services\
                   WHERE id=@id',
          parameters: [
             { name: 'id', value: req.params.id }
@@ -30,7 +30,7 @@ module.exports = function() {
       };
       req.azureMobile.data.execute(query)
          .then(function (results) {
-            res.json({ users: results });
+            res.json({ service: results });
          });
    });
 
