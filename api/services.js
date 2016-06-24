@@ -19,6 +19,21 @@ module.exports = function() {
          });
    });
 
+   // Get service by Id
+   router.get('/:id', function(req, res, next) {
+      var query = {
+         sql: 'SSELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services\
+                  WHERE id=@id',
+         parameters: [
+            { name: 'id', value: req.params.id }
+         ]
+      };
+      req.azureMobile.data.execute(query)
+         .then(function (results) {
+            res.json({ users: results });
+         });
+   });
+
    // Create service
    router.post('/', function(req, res, next) {
       var db = req.azureMobile.data;
@@ -42,4 +57,5 @@ module.exports = function() {
    });
 
    return router;
-}
+};
+
