@@ -34,7 +34,4 @@ build/Release
 node_modules
 
 azureMobile.js
-<<<<<<< HEAD
-=======
 .idea
->>>>>>> 84bc781431b21da4b8ccef9b0a400ee3ff951bab
