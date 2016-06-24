@@ -7,7 +7,8 @@ var express = require('express'),
     azureMobileApps = require('azure-mobile-apps'),
     bodyParser = require('body-parser'),
     usersApi = require('./api/users'),
-    loginApi = require('./api/login');
+    loginApi = require('./api/login'),
+    servicesApi = require('./ap1/services');
 
 // Set up a standard Express app
 var app = express();
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 
 app.use('/api/v1/users', usersApi());
 app.use('/api/v1/login', loginApi());
+app.use('/api/v1/services', servicesApi());
 
 
 app.listen(process.env.PORT || 3000);   // Listen for requests
