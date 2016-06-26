@@ -22,6 +22,14 @@ module.exports = function() {
            res.json(400, err);
         });
     });
+
+    router.get('/fb', function(req, res, next) {
+        req.azureMobile.user.getIdentity("facebook").then((data) => {
+            res.status(200).type('application/json').json(data);
+        }).catch((error) => {
+            res.status(500).send(JSON.stringify(error));
+        });
+    });
     
     return router;
 };
