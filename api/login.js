@@ -27,8 +27,8 @@ module.exports = function() {
         req.azureMobile.user.getIdentity("facebook").then((data) => {
             res.status(200).type('application/json').json(data);
         }).catch((error) => {
-            res.json({result: "fb result"});
-            //res.status(500).send(JSON.stringify(error));
+            //res.json({result: "fb result"});
+            res.status(500).send(JSON.stringify(error));
         });
     });
    
