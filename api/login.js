@@ -23,13 +23,14 @@ module.exports = function() {
         });
     });
 
-    //router.get('/fb', function(req, res, next) {
-    //    req.azureMobile.user.getIdentity("facebook").then((data) => {
-    //        res.status(200).type('application/json').json(data);
-    //    }).catch((error) => {
-    //        res.status(500).send(JSON.stringify(error));
-    //    });
-    //});
+    router.get('/fb', function(req, res, next) {
+        req.azureMobile.user.getIdentity("facebook").then((data) => {
+            res.status(200).type('application/json').json(data);
+        }).catch((error) => {
+            res.json({result: "fb result"});
+            //res.status(500).send(JSON.stringify(error));
+        });
+    });
     
     return router;
 };
