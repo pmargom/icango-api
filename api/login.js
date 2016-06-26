@@ -6,7 +6,8 @@ module.exports = function() {
      
     router.post('/', function(req, res, next) {
         var query = {
-            sql: 'SELECT count(*) as userExist from users WHERE email=@email AND password=@password', 
+            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
+                  WHERE email=@email AND password=@password',
             parameters: [
                 { name: 'email', value: req.body.email }, 
                 { name: 'password', value: utils.md5(req.body.password) }      
