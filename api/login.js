@@ -25,11 +25,21 @@ module.exports = function() {
 
     router.get('/fb', function(req, res, next) {
         //res.json({ result: "kakakak"});
-        req.azureMobile.user.getIdentity("facebook").then((data) => {
+        /*req.azureMobile.user.getIdentity("facebook").then((data) => {
             res.status(200).type('application/json').json(data);
         }).catch((error) => {
             res.status(500).send(JSON.stringify(error));
         });
+        */
+        /*req.user.getIdentity("facebook").then((data) => {
+            res.status(200).type('application/json').json(data);
+        }).catch((error) => {
+            res.status(500).send(JSON.stringify(error));
+        });
+        */
+        /*req.user.getIdentities(function())*/
+        var currentUser = req.azureMobile.user;
+        res.json({ result: "currentUser: " + currentUser});
     });
    
     return router;
