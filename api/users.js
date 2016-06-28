@@ -26,7 +26,7 @@ module.exports = function() {
     // Get all users
     router.get('/', function(req, res, next) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users',
+            sql: 'SELECT id, email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users',
             parameters: []
         };
 
@@ -42,7 +42,7 @@ module.exports = function() {
     // Get user by Id
     router.get('/:id', function(req, res, next) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
+            sql: 'SELECT id, email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
                   WHERE id=@id',
             parameters: [
                 { name: 'id', value: req.params.id }
