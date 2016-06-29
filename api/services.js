@@ -6,35 +6,51 @@ module.exports = function() {
    // Get all services
    router.get('/', function(req, res, next) {
       var query = {
-         sql: 'SELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services',
+         sql: 'GetServices',
          parameters: []
       };
 
       req.azureMobile.data.execute(query)
          .then(function (results) {
-            res.json({
-               totalRows: results.length,
-               data: results
-            });
+            if (results.length > 0)
+               res.json({
+                  totalRows: results.length,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
          });
    });
 
    // Get service by Id
    router.get('/:id', function(req, res, next) {
       var query = {
-         sql: 'SELECT id, name, description,finishedAt, finishedTime,price, tags, idUserRequest, idUserResponse, latitude, longitude, status FROM services\
-                  WHERE id=@id',
+         sql: 'GetServiceById @id',
          parameters: [
             { name: 'id', value: req.params.id }
          ]
       };
       req.azureMobile.data.execute(query)
          .then(function (results) {
-         res.json({
-             totalRows: results.length,
-             data: results
+            if (results.length > 0)
+               res.json({
+                  totalRows: results.length,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+
          });
-      });
    });
 
    // Create service
@@ -42,20 +58,42 @@ module.exports = function() {
       var db = req.azureMobile.data;
 
       var query = {
-         sql: 'INSERT INTO services(name,  description)\
-                            VALUES (@name, @description);',
+         sql: 'CreateService',
          parameters: [
-            { name: 'email', value: req.body.name },
-            { name: 'password', value: req.body.description }
+            { name: 'name', value: req.body.name },
+            { name: 'description', value: req.body.description },
+            { name: 'price', value: req.body.price },
+            { name: 'tags', value: req.body.tags },
+            { name: 'idUserRequest', value: req.body.idUserRequest },
+            { name: 'latitude', value: req.body.latitude },
+            { name: 'longitude', value: req.body.longitude },
+            { name: 'status', value: req.body.status }
          ]
       };
 
       db.execute(query)
          .then(function (results) {
-            res.json(results);
+            if (results.length > 0)
+               res.json({
+                  totalRows: results.length,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+
          })
          .catch(function (err) {
-            res.json(400, err);
+            //res.json(400, err);
+            res.json({
+               totalRows: 0,
+               error: err,
+               data: {}
+            });
          });
    });
 
