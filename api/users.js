@@ -73,7 +73,7 @@ module.exports = function() {
         });
     });
 
-    // Get services by userId
+    // Get services by requestuserId
     router.get('/:id/services', function(req, res, next) {
         var query = {
             sql: 'GetServicesByRequestUserId @id',
