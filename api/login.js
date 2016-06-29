@@ -6,7 +6,6 @@ module.exports = function() {
      
     router.post('/', function(req, res, next) {
         var query = {
-            //sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users WHERE email=@email AND password=@password',
             sql: 'GetLogin @email, @password',
             parameters: [
                 { name: 'email', value: req.body.email }, 
@@ -18,11 +17,13 @@ module.exports = function() {
         .then(function (results) {
             if (results.length > 0)
                 res.json({
+                    totalRows: results.length,
                     error: '', 
                     data: results[0]
                 });
             else 
                 res.json({
+                    totalRows: 0,
                     error: 'No data found', 
                     data: {}
                 });
