@@ -19,7 +19,7 @@ module.exports = function() {
                 res.json({
                     totalRows: results.length,
                     error: '', 
-                    data: results[0]
+                    data: results
                 });
             else 
                 res.json({
