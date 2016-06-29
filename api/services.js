@@ -5,9 +5,12 @@ module.exports = function() {
 
    // Get all services
    router.get('/', function(req, res, next) {
+
       var query = {
          sql: 'GetServices',
-         parameters: []
+         parameters: [
+            { name: 'status', value: req.params.status }
+         ]
       };
 
       req.azureMobile.data.execute(query)
