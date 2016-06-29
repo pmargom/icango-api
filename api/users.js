@@ -76,9 +76,10 @@ module.exports = function() {
     // Get services by requestuserId
     router.get('/:id/services', function(req, res, next) {
         var query = {
-            sql: 'GetServicesByRequestUserId @id',
+            sql: 'GetServicesByUserId @id, @type',
             parameters: [
-                { name: 'id', value: req.params.id }
+                {name: 'id', value: req.params.id},
+                {name: 'type', value: req.query.type},
             ]
         };
         req.azureMobile.data.execute(query)
@@ -162,7 +163,6 @@ module.exports = function() {
             });
         });
     });
-
 
     return router;
 };
