@@ -8,8 +8,7 @@ module.exports = function() {
     // Helper method to get user by email
     function getUserByEmail(db, email, callback) {
         var query = {
-            sql: 'SELECT email FROM users\
-                  WHERE email=@email',
+            sql: 'GetUserByEmail @email',
             parameters: [
                 { name: 'email', value: email }
             ]
@@ -26,12 +25,13 @@ module.exports = function() {
     // Get all users
     router.get('/', function(req, res, next) {
         var query = {
-            sql: 'SELECT id, email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users',
+            sql: 'GetUsers',
             parameters: []
         };
 
         req.azureMobile.data.execute(query)
            .then(function (results) {
+
             if (results.length > 0)
                 res.json({
                    totalRows: results.length,
@@ -50,39 +50,56 @@ module.exports = function() {
     // Get user by Id
     router.get('/:id', function(req, res, next) {
         var query = {
-            sql: 'SELECT id, email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
-                  WHERE id=@id',
+            sql: 'GetUserById @id',
             parameters: [
                 { name: 'id', value: req.params.id }
             ]
         };
         req.azureMobile.data.execute(query)
         .then(function (results) {
-           res.json({
-               totalRows: results.length,
-               data: results
-           });
+
+            if (results.length > 0)
+                res.json({
+                    totalRows: results.length,
+                    error: '',
+                    data: results
+                });
+            else
+                res.json({
+                    totalRows: 0,
+                    error: 'No data found',
+                    data: {}
+                });
         });
     });
-
 
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
         getUserByEmail(db, req.body.email, function(results, err) {
             if (err) {
-                res.json(400,err);
+                //res.json(400,err);
+                res.json({
+                    totalRows: 0,
+                    error: err,
+                    data: {}
+                });
                 return;
             }
 
             if (err || (results && results.length > 0)) {
-                res.json(400, err || 'User already exists');
+                //res.json(400, err || 'User already exists');
+                res.json({
+                    totalRows: 0,
+                    error: err || 'User already exists',
+                    data: {}
+                });
+
                 return;
             }
 
             var query = {
-                sql: 'INSERT INTO users(email, password, firstName, lastName, photoUrl, searchPreferences, status)\
-                            VALUES (@email, @password, @firstName, @lastName, @photoUrl, @searchPreferences, @status);',
+                sql: 'CreateUser @email, @password, @firstName, @lastName, @photoUrl, @searchPreferences, @status',
                 parameters: [
                     { name: 'email', value: req.body.email },
                     { name: 'password', value: utils.md5(req.body.password) },
@@ -96,10 +113,26 @@ module.exports = function() {
 
             db.execute(query)
             .then(function (results) {
-                res.json(results);
+                if (results.length > 0)
+                    res.json({
+                        totalRows: results.length,
+                        error: '',
+                        data: results
+                    });
+                else
+                    res.json({
+                        totalRows: 0,
+                        error: 'No data found',
+                        data: {}
+                    });
             })
             .catch(function (err) {
-               res.json(400, err);
+               //res.json(400, err);
+                res.json({
+                    totalRows: 0,
+                    error: err,
+                    data: {}
+                });
             });
         });
     });
