@@ -7,9 +7,9 @@ module.exports = function() {
    router.get('/', function(req, res, next) {
 
       var query = {
-         sql: 'GetServices',
+         sql: 'GetServices @status',
          parameters: [
-            { name: 'status', value: req.params.status }
+            { name: 'status', value: req.query.status }
          ]
       };
 
