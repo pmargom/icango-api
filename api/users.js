@@ -73,6 +73,32 @@ module.exports = function() {
         });
     });
 
+    // Get services by userId
+    router.get('/:id/services', function(req, res, next) {
+        var query = {
+            sql: 'GetServicesByRequestUserId @id',
+            parameters: [
+                { name: 'id', value: req.params.id }
+            ]
+        };
+        req.azureMobile.data.execute(query)
+            .then(function (results) {
+
+                if (results.length > 0)
+                    res.json({
+                        totalRows: results.length,
+                        error: '',
+                        data: results
+                    });
+                else
+                    res.json({
+                        totalRows: 0,
+                        error: 'No data found',
+                        data: {}
+                    });
+            });
+    });
+
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
