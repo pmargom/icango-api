@@ -58,7 +58,7 @@ module.exports = function() {
       var db = req.azureMobile.data;
 
       var query = {
-         sql: 'CreateService',
+         sql: 'CreateService @name,@description,@price,@tags,@idUserRequest,@latitude,@longitude,@status',
          parameters: [
             { name: 'name', value: req.body.name },
             { name: 'description', value: req.body.description },
