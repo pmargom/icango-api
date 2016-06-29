@@ -8,7 +8,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     usersApi = require('./api/users'),
     loginApi = require('./api/login'),
-    servicesApi = require('./api/services');
+    servicesApi = require('./api/services'),
+    testApi = require('./api/test');
 
 // Set up a standard Express app
 var app = express();
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.use('/api/v1/users', usersApi());
 app.use('/api/v1/login', loginApi());
 app.use('/api/v1/services', servicesApi());
+app.use('/api/v1/test', testApi());
 
 
 app.listen(process.env.PORT || 3000);   // Listen for requests

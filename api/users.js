@@ -32,10 +32,18 @@ module.exports = function() {
 
         req.azureMobile.data.execute(query)
            .then(function (results) {
-               res.json({
+            if (results.length > 0)
+                res.json({
                    totalRows: results.length,
+                   error: '',
                    data: results
-               });
+                });
+            else 
+                res.json({
+                    totalRows: 0,
+                    error: 'No data found', 
+                    data: {}
+                });               
            });
     });
 

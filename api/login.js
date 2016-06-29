@@ -6,8 +6,8 @@ module.exports = function() {
      
     router.post('/', function(req, res, next) {
         var query = {
-            sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users\
-                  WHERE email=@email AND password=@password',
+            //sql: 'SELECT email, firstName, lastName, photoUrl, searchPreferences, status, deleted FROM users WHERE email=@email AND password=@password',
+            sql: 'GetLogin @email, @password',
             parameters: [
                 { name: 'email', value: req.body.email }, 
                 { name: 'password', value: utils.md5(req.body.password) }      
@@ -16,7 +16,16 @@ module.exports = function() {
         
         req.azureMobile.data.execute(query)
         .then(function (results) {
-            res.json({ data: results[0] });
+            if (results.length > 0)
+                res.json({
+                    error: '', 
+                    data: results[0]
+                });
+            else 
+                res.json({
+                    error: 'No data found', 
+                    data: {}
+                });
         })
         .catch(function (err) {
            res.json(400, err);

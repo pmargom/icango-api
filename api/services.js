@@ -15,7 +15,7 @@ module.exports = function() {
             res.json({
                totalRows: results.length,
                data: results
-            })
+            });
          });
    });
 
@@ -30,8 +30,11 @@ module.exports = function() {
       };
       req.azureMobile.data.execute(query)
          .then(function (results) {
-            res.json({ service: results });
+         res.json({
+             totalRows: results.length,
+             data: results
          });
+      });
    });
 
    // Create service
