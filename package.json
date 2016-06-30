@@ -9,8 +9,12 @@
   "repository": "Azure/azure-mobile-apps-quickstarts",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.0.0-rc.6",
+    "azure-mobile-apps": "^2.1.0",
+    "azure-storage": "^1.1.0",
     "express": "^4.13.0",
-    "azure-mobile-apps": "^2.1.0"
+    "nconf": "^0.8.4",
+    "node-uuid": "^1.4.7"
   },
   "devDependencies": {}
 }
