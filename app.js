@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.use('/api/v1/users', usersApi());
 app.use('/api/v1/login', loginApi());
 app.use('/api/v1/services', servicesApi());
-app.use('/api/v1/serviceImages', imagesApi());
+app.use('/api/v1/images', imagesApi());
 app.use('/api/v1/urlsascontainer', urlsascontainerApi());
 app.use('/api/v1/test', testApi());
 
