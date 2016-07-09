@@ -8,7 +8,7 @@ module.exports = function() {
       var query = {
          sql: 'GetServiceImagesByServiceId @idService',
          parameters: [
-            { name: 'idService', value: req.params.id }
+            { name: 'idService', value: idService }
          ]
       };
       db.execute(query)
@@ -48,21 +48,35 @@ module.exports = function() {
    });
 
    // Get service by Id
-   router.get('/:id', function(req, res, next) {
+   router.get('/:id', function (req, res, next) {
       var query = {
          sql: 'GetServiceById @id',
          parameters: [
-            { name: 'id', value: req.params.id }
+            {name: 'id', value: req.params.id}
          ]
       };
-      req.azureMobile.data.execute(query)
+      var db = req.azureMobile.data;
+      db.execute(query)
          .then(function (results) {
-            if (results.length > 0)
-               res.json({
-                  totalRows: results.length,
-                  error: '',
-                  data: results
+            if (results.length > 0) {
+
+               // after retrieving service data, asking the images
+               getImagesByServiceId(db, results[0].id, function (resultsImages, err) {
+                  var servicesImages = [];
+                  if (err === null) {
+                     servicesImages = resultsImages;
+                  }
+
+                  res.json({
+                     totalRows: results.length,
+                     error: '',
+                     data: {
+                        service: results[0],
+                        images: servicesImages
+                     }
+                  });
                });
+            }
             else
                res.json({
                   totalRows: 0,
@@ -86,30 +100,18 @@ module.exports = function() {
             return;
          }
 
-         db.execute(query)
-            .then(function (results) {
-               if (results.length > 0)
-                  res.json({
-                     totalRows: results.length,
-                     error: '',
-                     data: results
-                  });
-               else
-                  res.json({
-                     totalRows: 0,
-                     error: 'No data found',
-                     data: {}
-                  });
-            })
-            .catch(function (err) {
-
-               res.json({
-                  totalRows: 0,
-                  error: err,
-                  data: {}
-               });
+         if (results.length > 0)
+            res.json({
+               totalRows: results.length,
+               error: '',
+               data: results
             });
-
+         else
+            res.json({
+               totalRows: 0,
+               error: 'No data found',
+               data: {}
+            });
       });
 
    });
