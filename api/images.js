@@ -7,10 +7,8 @@ module.exports = function() {
    router.get('/', function(req, res, next) {
 
       var query = {
-         sql: 'GetServiceImages @idService',
-         parameters: [
-            { name: 'idService', value: req.query.idService }
-         ]
+         sql: 'GetServiceImages',
+         parameters: []
       };
 
       req.azureMobile.data.execute(query)
@@ -29,6 +27,32 @@ module.exports = function() {
                });
          });
    });
+
+   // router.get('/', function(req, res, next) {
+   //
+   //    var query = {
+   //       sql: 'GetServiceImages @idService',
+   //       parameters: [
+   //          { name: 'idService', value: req.query.idService }
+   //       ]
+   //    };
+   //
+   //    req.azureMobile.data.execute(query)
+   //       .then(function (results) {
+   //          if (results.length > 0)
+   //             res.json({
+   //                totalRows: results.length,
+   //                error: '',
+   //                data: results
+   //             });
+   //          else
+   //             res.json({
+   //                totalRows: 0,
+   //                error: 'No data found',
+   //                data: {}
+   //             });
+   //       });
+   // });
 
    // Get service images by Id
    router.get('/:id', function(req, res, next) {
