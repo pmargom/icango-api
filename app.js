@@ -9,7 +9,7 @@ var express = require('express'),
     usersApi = require('./api/users'),
     loginApi = require('./api/login'),
     servicesApi = require('./api/services'),
-    serviceImagesApi = require('./api/serviceImages'),
+    imagesApi = require('./api/images'),
     urlsascontainerApi = require('./api/urlsascontainer'),
     testApi = require('./api/test');
 
@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.use('/api/v1/users', usersApi());
 app.use('/api/v1/login', loginApi());
 app.use('/api/v1/services', servicesApi());
-app.use('/api/v1/serviceImages', serviceImagesApi());
+app.use('/api/v1/serviceImages', imagesApi());
 app.use('/api/v1/urlsascontainer', urlsascontainerApi());
 app.use('/api/v1/test', testApi());
 
