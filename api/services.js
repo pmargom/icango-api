@@ -62,7 +62,7 @@ module.exports = function() {
       var query = {
          sql: 'GetServiceImagesByServiceId @idService',
          parameters: [
-            { name: 'idService', value: req.query.id }
+            { name: 'idService', value: req.params.id }
          ]
       };
 
