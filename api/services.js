@@ -56,6 +56,33 @@ module.exports = function() {
          });
    });
 
+   // Get images by  service Id
+   router.get('/:id/images', function(req, res, next) {
+
+      var query = {
+         sql: 'GetServiceImagesByServiceId @idService',
+         parameters: [
+            { name: 'idService', value: req.query.idService }
+         ]
+      };
+
+      req.azureMobile.data.execute(query)
+         .then(function (results) {
+            if (results.length > 0)
+               res.json({
+                  totalRows: results.length,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+         });
+   });
+
    // Create service
    router.post('/', function(req, res, next) {
       var db = req.azureMobile.data;
