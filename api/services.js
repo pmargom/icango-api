@@ -23,12 +23,16 @@ module.exports = function() {
    // Get all services
    router.get('/', function(req, res, next) {
 
+      var page = req.query.page;
+      var rows = req.query.rows;
+      var status = req.query.status;
+
       var query = {
          sql: 'GetServices @status, @page, @rows',
          parameters: [
-            { name: 'status', value: req.query.status },
-            { name: 'page', value: req.query.page },
-            { name: 'rows', value: req.query.rows }
+            { name: 'status', value: status },
+            { name: 'page', value: page },
+            { name: 'rows', value: rows }
          ],
          multiple: true // this allows to receive multiple resultsets
       };
@@ -38,12 +42,16 @@ module.exports = function() {
             if (results.length > 0)
                res.json({
                   totalRows: results[0][0].totalRows,
+                  page: page,
+                  rows: rows,
                   error: '',
                   data: results[1]
                });
             else
                res.json({
                   totalRows: 0,
+                  page: 0,
+                  rows: 0,
                   error: 'No data found',
                   data: {}
                });
