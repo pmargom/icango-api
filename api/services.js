@@ -24,19 +24,22 @@ module.exports = function() {
    router.get('/', function(req, res, next) {
 
       var query = {
-         sql: 'GetServices @status',
+         sql: 'GetServices @status, @page, @rows',
          parameters: [
-            { name: 'status', value: req.query.status }
-         ]
+            { name: 'status', value: req.query.status },
+            { name: 'page', value: req.query.page },
+            { name: 'rows', value: req.query.rows }
+         ],
+         multiple: true // this allows to receive multiple resultsets
       };
 
       req.azureMobile.data.execute(query)
          .then(function (results) {
             if (results.length > 0)
                res.json({
-                  totalRows: results.length,
+                  totalRows: results[0][0].totalRows,
                   error: '',
-                  data: results
+                  data: results[1]
                });
             else
                res.json({
