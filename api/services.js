@@ -132,7 +132,7 @@ module.exports = function() {
       var db = req.azureMobile.data;
 
       var query = {
-         sql: 'CreateService @name,@description,@price,@tags,@idUserRequest,@latitude,@longitude,@status',
+         sql: 'CreateService @name,@description,@price,@tags,@idUserRequest,@latitude,@longitude,@status, @address',
          parameters: [
             { name: 'name', value: req.body.name },
             { name: 'description', value: req.body.description },
@@ -141,7 +141,8 @@ module.exports = function() {
             { name: 'idUserRequest', value: req.body.idUserRequest },
             { name: 'latitude', value: req.body.latitude },
             { name: 'longitude', value: req.body.longitude },
-            { name: 'status', value: req.body.status }
+            { name: 'status', value: req.body.status },
+            { name: 'address', value: req.body.address }
          ]
       };
 
