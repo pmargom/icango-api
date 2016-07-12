@@ -81,10 +81,10 @@ module.exports = function() {
                   res.json({
                      totalRows: results.length,
                      error: '',
-                     data: {
+                     data: [{
                         service: results[0],
                         images: servicesImages
-                     }
+                     }]
                   });
                });
             }
