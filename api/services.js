@@ -23,8 +23,8 @@ module.exports = function() {
    // Get all services
    router.get('/', function(req, res, next) {
 
-      var page = req.query.page;
-      var rows = req.query.rows;
+      var page = req.query.page || 1;
+      var rows = req.query.rows || 25;
       var status = req.query.status;
 
       var query = {
@@ -129,24 +129,41 @@ module.exports = function() {
 
    // Create service
    router.post('/', function(req, res, next) {
-      var db = req.azureMobile.data;
-
+      
+      var name = req.body.name;
+      var description = req.body.description;
+      var idUserRequest = req.body.idUserRequest;
+      var price = req.body.price;
+      var tags = null;
+      if (req.body.tags !== '') tags = req.body.tags;
+      var latitude = null;
+      if (req.body.latitude !== '') latitude = req.body.latitude;
+      var longitude = null;
+      if (req.body.longitude !== '') longitude = req.body.longitude;
+      var address = null;
+      if (req.body.address !== '') address = req.body.address;
+      var status = null;
+      if (req.body.status !== '') status = req.body.status;
+      var id = null;
+      if (req.body.id !== '') id = req.body.id;
+      
       var query = {
          sql: 'CreateService @name,@description,@idUserRequest,@price,@tags,@latitude,@longitude,@status,@address,@id',
          parameters: [
-            { name: 'name', value: req.body.name },
-            { name: 'description', value: req.body.description },
-            { name: 'idUserRequest', value: req.body.idUserRequest },
-            { name: 'price', value: req.body.price },
-            { name: 'tags', value: req.body.tags },
-            { name: 'latitude', value: req.body.latitude },
-            { name: 'longitude', value: req.body.longitude },
-            { name: 'status', value: req.body.status }, 
-            { name: 'address', value: req.body.address }, 
-            { name: 'id', value: req.body.id }
+            { name: 'name', value: name },
+            { name: 'description', value: description },
+            { name: 'idUserRequest', value: idUserRequest },
+            { name: 'price', value: price },
+            { name: 'tags', value: tags },
+            { name: 'latitude', value: latitude },
+            { name: 'longitude', value: longitude },
+            { name: 'status', value: status }, 
+            { name: 'address', value: address }, 
+            { name: 'id', value: id }
          ]
       };
-
+      
+      var db = req.azureMobile.data;
       db.execute(query)
          .then(function (results) {
             if (results.length > 0)
@@ -175,22 +192,40 @@ module.exports = function() {
 
    // Modify service
    router.put('/:id', function(req, res, next) {
-      var db = req.azureMobile.data;
+      var name = req.body.name;
+      var description = req.body.description;
+      var idUserRequest = req.body.idUserRequest;
+      var price = req.body.price;
+      var tags = null;
+      if (req.body.tags !== '') tags = req.body.tags;
+      var latitude = null;
+      if (req.body.latitude !== '') latitude = req.body.latitude;
+      var longitude = null;
+      if (req.body.longitude !== '') longitude = req.body.longitude;
+      var address = null;
+      if (req.body.address !== '') address = req.body.address;
+      var status = null;
+      if (req.body.status !== '') status = req.body.status;
+      var id = null;
+      if (req.body.id !== '') id = req.body.id;
+      
       var query = {
-         sql: 'CreateService @id, @name,@description,@price,@tags,@idUserRequest,@latitude,@longitude,@status',
+         sql: 'CreateService @name,@description,@idUserRequest,@price,@tags,@latitude,@longitude,@status,@address,@id',
          parameters: [
-            { name: 'id', value: req.params.id },
-            { name: 'name', value: req.body.name },
-            { name: 'description', value: req.body.description },
-            { name: 'price', value: req.body.price },
-            { name: 'tags', value: req.body.tags },
-            { name: 'idUserRequest', value: req.body.idUserRequest },
-            { name: 'latitude', value: req.body.latitude },
-            { name: 'longitude', value: req.body.longitude },
-            { name: 'status', value: req.body.status }
+            { name: 'name', value: name },
+            { name: 'description', value: description },
+            { name: 'idUserRequest', value: idUserRequest },
+            { name: 'price', value: price },
+            { name: 'tags', value: tags },
+            { name: 'latitude', value: latitude },
+            { name: 'longitude', value: longitude },
+            { name: 'status', value: status }, 
+            { name: 'address', value: address }, 
+            { name: 'id', value: id }
          ]
       };
-
+      
+      var db = req.azureMobile.data;
       db.execute(query)
          .then(function (results) {
             if (results.length > 0)
@@ -216,7 +251,7 @@ module.exports = function() {
             });
          });
    });
-
+   
    return router;
 };
 
