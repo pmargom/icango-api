@@ -1,5 +1,4 @@
 var express = require('express');
-//var azure = require('azure');
 var qs = require('querystring');
 var azure = require('azure-storage');
 var nconf = require('nconf');

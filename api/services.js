@@ -78,13 +78,11 @@ module.exports = function() {
                      servicesImages = resultsImages;
                   }
 
+                  results[0]["images"] = servicesImages;
                   res.json({
                      totalRows: results.length,
                      error: '',
-                     data: [{
-                        service: results[0],
-                        images: servicesImages
-                     }]
+                     data: [results[0]]
                   });
                });
             }
@@ -192,10 +190,14 @@ module.exports = function() {
 
    // Modify service
    router.put('/:id', function(req, res, next) {
-      var name = req.body.name;
-      var description = req.body.description;
-      var idUserRequest = req.body.idUserRequest;
-      var price = req.body.price;
+      var name = null;
+      if (req.body.name !== '') name = req.body.name;
+      var description = null;
+      if (req.body.description !== '') description = req.body.description;
+      var idUserResponse = null;
+      if (req.body.idUserResponse !== '') idUserResponse = req.body.idUserResponse;
+      var price = null;
+      if (req.body.price !== '') price = req.body.price;
       var tags = null;
       if (req.body.tags !== '') tags = req.body.tags;
       var latitude = null;
@@ -206,22 +208,21 @@ module.exports = function() {
       if (req.body.address !== '') address = req.body.address;
       var status = null;
       if (req.body.status !== '') status = req.body.status;
-      var id = null;
-      if (req.body.id !== '') id = req.body.id;
-      
+      var id = req.params.id;
+            
       var query = {
-         sql: 'CreateService @name,@description,@idUserRequest,@price,@tags,@latitude,@longitude,@status,@address,@id',
+         sql: 'UpdateService @id,@name,@description,@idUserResponse,@price,@tags,@latitude,@longitude,@status,@address',
          parameters: [
+            { name: 'id', value: id }, 
             { name: 'name', value: name },
             { name: 'description', value: description },
-            { name: 'idUserRequest', value: idUserRequest },
+            { name: 'idUserResponse', value: idUserResponse },
             { name: 'price', value: price },
             { name: 'tags', value: tags },
             { name: 'latitude', value: latitude },
             { name: 'longitude', value: longitude },
             { name: 'status', value: status }, 
-            { name: 'address', value: address }, 
-            { name: 'id', value: id }
+            { name: 'address', value: address }
          ]
       };
       
