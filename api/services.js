@@ -142,11 +142,9 @@ module.exports = function() {
       if (req.body.address !== '') address = req.body.address;
       var status = null;
       if (req.body.status !== '') status = req.body.status;
-      var id = null;
-      if (req.body.id !== '') id = req.body.id;
       
       var query = {
-         sql: 'CreateService @name,@description,@idUserRequest,@price,@tags,@latitude,@longitude,@status,@address,@id',
+         sql: 'CreateService @name,@description,@idUserRequest,@price,@tags,@latitude,@longitude,@status,@address',
          parameters: [
             { name: 'name', value: name },
             { name: 'description', value: description },
@@ -156,8 +154,7 @@ module.exports = function() {
             { name: 'latitude', value: latitude },
             { name: 'longitude', value: longitude },
             { name: 'status', value: status }, 
-            { name: 'address', value: address }, 
-            { name: 'id', value: id }
+            { name: 'address', value: address }
          ]
       };
       
