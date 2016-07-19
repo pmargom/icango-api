@@ -23,8 +23,8 @@ module.exports = function() {
    // Get all services
    router.get('/', function(req, res, next) {
 
-      var page = req.query.page || 1;
-      var rows = req.query.rows || 25;
+      var page = req.query.page;
+      var rows = req.query.rows;
       var status = req.query.status;
 
       var query = {
