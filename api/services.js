@@ -105,10 +105,47 @@ module.exports = function() {
                   error: 'No data found',
                   data: {}
                });
-
          });
    });
 
+   // Get service by Id and IdUserRequest
+   router.get('/:id/users/:userId', function (req, res, next) {
+      var query = {
+         sql: 'GetServiceByIdAndOwner @id, @idUserRequest',
+         parameters: [
+            {name: 'id', value: req.params.id},
+            {name: 'idUserRequest', value: req.params.userId}
+         ]
+      };
+      var db = req.azureMobile.data;
+      db.execute(query)
+         .then(function (results) {
+            if (results.length > 0) {
+
+               // after retrieving service data, asking the images
+               getImagesByServiceId(db, results[0].id, function (resultsImages, err) {
+                  var servicesImages = [];
+                  if (err === null) {
+                     servicesImages = resultsImages;
+                  }
+
+                  results[0]["images"] = servicesImages;
+                  res.json({
+                     totalRows: results.length,
+                     error: '',
+                     data: [results[0]]
+                  });
+               });
+            }
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+         });
+   });
+   
    // Get images by  service Id
    router.get('/:id/images', function(req, res, next) {
       var db = req.azureMobile.data;
