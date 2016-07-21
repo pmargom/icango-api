@@ -75,28 +75,54 @@ module.exports = function() {
 
     // Get services by requestuserId
     router.get('/:id/services', function(req, res, next) {
-        var query = {
-            sql: 'GetServicesByUserId @id, @type',
-            parameters: [
-                {name: 'id', value: req.params.id},
-                {name: 'type', value: req.query.type},
-            ]
-        };
+
+      var page = req.query.page;
+      var rows = req.query.rows;
+      var status = req.query.status;
+      
+      var latitude = null;
+      if (req.query.latitude !== '') latitude = req.query.latitude;
+      var longitude = null;
+      if (req.query.longitude !== '') longitude = req.query.longitude;
+      var distance = null;
+      if (req.query.distance !== '') distance = req.query.distance;
+      
+      var searchText = req.query.searchText;
+
+      var query = {
+         sql: 'GetServicesByUserId @id, @type, @status, @page, @rows, @latitude, @longitude, @distance, @searchText',
+         parameters: [
+            {name: 'id', value: req.params.id},
+            {name: 'type', value: req.query.type},
+            { name: 'status', value: status },
+            { name: 'page', value: page },
+            { name: 'rows', value: rows },
+            { name: 'latitude', value: latitude },
+            { name: 'longitude', value: longitude },
+            { name: 'distance', value: distance },
+            { name: 'searchText', value: searchText }
+         ],
+         multiple: true // this allows to receive multiple resultsets
+      };
         req.azureMobile.data.execute(query)
             .then(function (results) {
 
-                if (results.length > 0)
-                    res.json({
-                        totalRows: results.length,
-                        error: '',
-                        data: results
-                    });
-                else
-                    res.json({
-                        totalRows: 0,
-                        error: 'No data found',
-                        data: {}
-                    });
+           if (results.length > 0)
+               res.json({
+                  totalRows: results[0][0].totalRows,
+                  page: page,
+                  rows: rows,
+                  error: '',
+                  data: results[1]
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  page: 0,
+                  rows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
             });
     });
 
