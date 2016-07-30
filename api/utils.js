@@ -6,7 +6,7 @@ module.exports = {
         return crypto.createHash('md5').update(string).digest('hex');
     },
 	// https://blogs.msdn.microsoft.com/luisguerrero/2014/04/04/envo-de-correos-utilizando-sendgrid-desde-node-js/
-	sendEmail: function (from, to, subject, body) {
+	sendEmail: function (from, to, subject, body, callback) {
 	
 		var fromEmail = new helper.Email(from);
 		var toEmail = new helper.Email(to);
@@ -21,10 +21,12 @@ module.exports = {
 		request.path = '/v3/mail/send';
 		request.body = requestBody;
 		sg.API(request, function (response) {
-			console.log(response.statusCode);
-			console.log(response.body);
-			console.log(response.headers);
+			/*console.log('response -> ', response);
+			console.log('response.statusCode -> ', response.statusCode);
+			console.log('response.body -> ', response.body);
+			console.log('response.headers -> ', response.headers);		
+			*/
+			callback(response);
 		});
-		return true;
 	}
 };

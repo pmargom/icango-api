@@ -10,7 +10,14 @@ module.exports = function() {
         var to = req.body.to;
         var subject = req.body.subject;
         var body = req.body.body;
-        if (utils.sendEmail(from, to, subject, body)) {
+        utils.sendEmail(from, to, subject, body, function(emailReponse) {
+            if (emailReponse.statusCode !== 202) {
+                res.json({
+                    error: "test error",
+                    result: "Sorry, problems during sending email.",
+                    messageInfo: null
+                });               
+            }
             res.json({
                 error: "",
                 result: "Email sent successfully.",
@@ -20,15 +27,8 @@ module.exports = function() {
                     subject: subject,
                     body: body
                 }
-            });
-        }
-        else {
-            res.json({
-                error: "test error",
-                result: "Sorry, problems during sending email.",
-                messageInfo: null
-            });
-        }
+            }); 
+        });
     });
      
     router.post('/', function(req, res, next) {
