@@ -8,7 +8,7 @@ module.exports = {
 	// https://blogs.msdn.microsoft.com/luisguerrero/2014/04/04/envo-de-correos-utilizando-sendgrid-desde-node-js/
 	sendEmail: function (from, to, subject, body, callback) {
 	
-		var fromEmail = new helper.Email(from);
+		var fromEmail = new helper.Email(from, 'iCanGo');
 		var toEmail = new helper.Email(to);
 		var subjectEmail = subject;
 		var bodyEmail = new helper.Content("text/html", body);

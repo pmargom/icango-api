@@ -104,7 +104,7 @@ module.exports = function() {
          ],
          multiple: true // this allows to receive multiple resultsets
       };
-        req.azureMobile.data.execute(query)
+      req.azureMobile.data.execute(query)
             .then(function (results) {
 
            if (results.length > 0)
@@ -126,6 +126,36 @@ module.exports = function() {
             });
     });
 
+    // Confirm the email address
+    router.get('/confirm/:id', function(req, res, next) {
+      var query = {
+         sql: 'ConfirmRegistry @id',
+         parameters: [
+            {name: 'id', value: req.params.id}
+         ]
+      };
+      req.azureMobile.data.execute(query)
+            .then(function (results) {
+
+           if (results.length > 0)
+               res.json({
+                  totalRows: 1,
+                  page: 1,
+                  rows: 1,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  page: 0,
+                  rows: 0,
+                  error: 'Error during email confirmation process.',
+                  data: {}
+               });
+            });        
+    });
+    
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
@@ -166,18 +196,32 @@ module.exports = function() {
 
             db.execute(query)
             .then(function (results) {
-                if (results.length > 0)
+                if (results.length > 0) {
                     res.json({
                         totalRows: results.length,
                         error: '',
                         data: results
                     });
-                else
+                    // After creating the new user in db, we have to send an email to confirm the registry
+                    var from = "hello@icango.com";
+                    var to = req.body.email;
+                    var subject = "Please, confirm your email address";
+                    var body = "Hi";
+                    body += " " + req.body.firstName + " " + req.body.lastName;
+                    body += "<br> Please confirm to email address <a href='" + process.env.API_BASE_URL + "users/confirm/" + results[0].id  + "'>here</a>";
+                    utils.sendEmail(from, to, subject, body, function(emailReponse) {
+                        if (emailReponse.statusCode !== 202) {
+                            console.log('CreateUser - send email confirmation error: ', emailReponse);             
+                        } 
+                    });
+                }
+                else {
                     res.json({
                         totalRows: 0,
                         error: 'No data found',
                         data: {}
                     });
+                }
             })
             .catch(function (err) {
                //res.json(400, err);
