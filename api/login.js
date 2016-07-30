@@ -3,6 +3,33 @@ var express = require('express'),
 
 module.exports = function() {
     var router = express.Router();
+    
+    // Testing email sending with SendGrid
+    router.post('/testEmail', function(req, res, next) {
+        var from = req.body.from;
+        var to = req.body.to;
+        var subject = req.body.subject;
+        var body = req.body.body;
+        if (utils.sendEmail(from, to, subject, body)) {
+            res.json({
+                error: "",
+                result: "Email sent successfully.",
+                messageInfo: {
+                    from: from,
+                    to: to,
+                    subject: subject,
+                    body: body
+                }
+            });
+        }
+        else {
+            res.json({
+                error: "test error",
+                result: "Sorry, problems during sending email.",
+                messageInfo: null
+            });
+        }
+    });
      
     router.post('/', function(req, res, next) {
         var query = {
