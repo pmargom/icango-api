@@ -1,5 +1,5 @@
+/* global blobService */
 var express = require('express');
-var qs = require('querystring');
 var azure = require('azure-storage');
 var nconf = require('nconf');
 nconf.env();
@@ -20,9 +20,11 @@ module.exports = function() {
         
         //console.log("accountName: ", accountName);
         //console.log("accountKey : ", accountKey);
-        console.log("La URL antes de la SAS es -> " + host );
+        //console.log("La URL antes de la SAS es -> " + host );
         
         var blobService = azure.createBlobService(accountName, accountKey, host);
+        
+        //console.log('BlobService -> ', blobService);
 
         var sharedAccessPolicy = { 
                 AccessPolicy : {
@@ -33,26 +35,32 @@ module.exports = function() {
                 
         // Generate the upload URL with SAS for the new blob.
         var sasURL = blobService.generateSharedAccessSignature(container, blobName, sharedAccessPolicy);
+        //console.log('sasURL -> ' + sasURL);
         //console.log("blobService.host: ", blobService);
         
         var item = {
                 // Set the query string.
-                sasQueryString: qs.stringify(sasURL.queryString),
+                sasQueryString: sasURL,
                 // Host + containerName full path
                 hostWithContainerName: "https://" + host + "/" + container
         };
+        
+        console.log('item: ', item);
+        
         res.status(200).json(item);
         
     });
 
-        function minutesFromNow(minutes) {
-           var date = new Date()
-           date.setMinutes(date.getMinutes() + minutes);
-           return date;
-        }
+
     
     return router;
 };
+
+function minutesFromNow(minutes) {
+   var date = new Date()
+   date.setMinutes(date.getMinutes() + minutes);
+   return date;
+}
 
 
 
