@@ -41,8 +41,8 @@ module.exports = function() {
         var item = {
                 // Set the query string.
                 sasQueryString: sasURL,
-                // Host + containerName full path
-                hostWithContainerName: "https://" + host + "/" + container
+                urlWithContainerAndBlobName: "https://" + host + "/" + container + "/" + blobName,
+                fullUrl: "https://" + host + "/" + container + "/" + blobName + "?" + sasURL
         };
         
         console.log('item: ', item);
