@@ -20,18 +20,20 @@ module.exports = function() {
         
         var sharedAccessPolicy = { 
                 AccessPolicy: { 
-                        Permissions: 'wl',
+                        Permissions: 'rw',
                         Expiry: minutesFromNow(20)
                 }
         };               
         // Generate the upload URL with SAS for the new blob.
-        var sasURL = blobService.generateSharedAccessSignature(container, '', sharedAccessPolicy);
+        var sasToken = blobService.generateSharedAccessSignature(container, '', sharedAccessPolicy);
+        //var sasURL = blobService.generateSharedAccessSignature(container, blobName, sharedAccessPolicy);
         //console.log('blobService -> ', blobService.getUrl(container, blobName, sasURL));
         
         var item = {
-                sasQueryString: sasURL,
+                sasToken: sasToken,
                 urlWithContainerAndBlobName: "https://" + host + "/" + container + "/" + blobName,
-                fullUrl: blobService.getUrl(container, blobName, sasURL)
+                urlWithContainerAndWithOutBlobName: "https://" + host + "/" + container + "/",
+                fullUrl: blobService.getUrl(container, blobName, sasToken)
         };
                
         res.status(200).json(item);
