@@ -300,7 +300,48 @@ module.exports = function() {
          });
    });
    
-   // Modify service
+   // Change service status
+   router.put('/:id/status/:status', function(req, res, next) {
+      
+      var id = req.params.id;
+      var nextStatus = req.params.status;
+      
+      var query = {
+         sql: 'ChangeServiceStatus @id,@nextStatus',
+         parameters: [
+            { name: 'id', value: id },
+            { name: 'nextStatus', value: nextStatus }
+         ]
+      };
+      
+      var db = req.azureMobile.data;
+      db.execute(query)
+         .then(function (results) {
+            if (results.length > 0)
+               res.json({
+                  totalRows: results.length,
+                  error: '',
+                  data: results
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+
+         })
+         .catch(function (err) {
+            //res.json(400, err);
+            res.json({
+               totalRows: 0,
+               error: err,
+               data: {}
+            });
+         });
+   });
+   
+   // Delete service
    router.delete('/:id', function(req, res, next) {
       var id = req.params.id;
 
