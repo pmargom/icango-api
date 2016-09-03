@@ -29,14 +29,18 @@ module.exports = function() {
         //var sasURL = blobService.generateSharedAccessSignature(container, blobName, sharedAccessPolicy);
         //console.log('blobService -> ', blobService.getUrl(container, blobName, sasURL));
         
-        var item = {
+        var results = {
                 sasToken: sasToken,
                 urlWithContainerAndBlobName: "https://" + host + "/" + container + "/" + blobName,
                 urlWithContainerAndWithOutBlobName: "https://" + host + "/" + container + "/",
                 fullUrl: blobService.getUrl(container, blobName, sasToken)
         };
                
-        res.status(200).json(item);
+        res.status(200).json({
+                  totalRows: 1,
+                  error: '',
+                  data: [results]
+               });
        
     });
         
