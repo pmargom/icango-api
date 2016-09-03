@@ -301,15 +301,17 @@ module.exports = function() {
    });
    
    // Change service status
-   router.put('/:id/status/:status', function(req, res, next) {
+   router.put('/:id/status', function(req, res, next) {
       
       var id = req.params.id;
-      var nextStatus = req.params.status;
+      var idUserResponse = req.body.idUserResponse;
+      var nextStatus = req.body.status;
       
       var query = {
-         sql: 'ChangeServiceStatus @id,@nextStatus',
+         sql: 'ChangeServiceStatus @id, @idUserResponse, @nextStatus',
          parameters: [
             { name: 'id', value: id },
+            { name: 'idUserResponse', value: idUserResponse },
             { name: 'nextStatus', value: nextStatus }
          ]
       };
