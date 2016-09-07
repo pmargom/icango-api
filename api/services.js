@@ -1,5 +1,7 @@
 
 var express = require('express');
+var utils = require('./utils');
+
 module.exports = function() {
    var router = express.Router();
 
@@ -73,10 +75,16 @@ module.exports = function() {
 
    // Get service by Id
    router.get('/:id', function (req, res, next) {
+         
+      var deleted = null;
+      
+      if (req.query.deleted !== undefined) deleted = req.query.deleted;
+      
       var query = {
-         sql: 'GetServiceById @id',
+         sql: 'GetServiceById @id, @deleted',
          parameters: [
-            {name: 'id', value: req.params.id}
+            {name: 'id', value: req.params.id},
+            {name: 'deleted', value: deleted}
          ]
       };
       var db = req.azureMobile.data;
@@ -319,12 +327,26 @@ module.exports = function() {
       var db = req.azureMobile.data;
       db.execute(query)
          .then(function (results) {
-            if (results.length > 0)
+            if (results.length > 0) {
                res.json({
                   totalRows: results.length,
                   error: '',
                   data: results
                });
+               // After changing the status of the service, we have to send an email to service's creator
+              /*var from = "hello@icango.com";
+              var to = req.body.email;
+              var subject = "Please, confirm your email address";
+              var body = "Hi";
+              body += " " + req.body.firstName + " " + req.body.lastName;
+              body += "<br> Please confirm to email address <a href='" + process.env.API_BASE_URL + "users/confirm/" + results[0].id  + "'>here</a>";
+              utils.sendEmail(from, to, subject, body, function(emailReponse) {
+                  if (emailReponse.statusCode !== 202) {
+                      console.log('CreateUser - send email confirmation error: ', emailReponse);             
+                  } 
+              });
+              */
+            }
             else
                res.json({
                   totalRows: 0,
