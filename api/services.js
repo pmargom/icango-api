@@ -35,11 +35,13 @@ module.exports = function() {
       if (req.query.longitude !== '') longitude = req.query.longitude;
       var distance = null;
       if (req.query.distance !== '') distance = req.query.distance;
+      var deleted = null;
+      if (req.query.deleted !== '') deleted = req.query.deleted;
       
       var searchText = req.query.searchText;
 
       var query = {
-         sql: 'GetServices @status, @page, @rows, @latitude, @longitude, @distance, @searchText',
+         sql: 'GetServices @status, @page, @rows, @latitude, @longitude, @distance, @searchText, @deleted',
          parameters: [
             { name: 'status', value: status },
             { name: 'page', value: page },
@@ -47,7 +49,8 @@ module.exports = function() {
             { name: 'latitude', value: latitude },
             { name: 'longitude', value: longitude },
             { name: 'distance', value: distance },
-            { name: 'searchText', value: searchText }
+            { name: 'searchText', value: searchText },
+            { name: 'deleted', value: deleted }
          ],
          multiple: true // this allows to receive multiple resultsets
       };
