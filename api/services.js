@@ -81,6 +81,7 @@ module.exports = function() {
          
       var deleted = null;
       
+      //console.log('req.query.deleted: ', req.query.deleted);
       if (req.query.deleted !== undefined) deleted = req.query.deleted;
       
       var query = {
