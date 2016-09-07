@@ -6,11 +6,12 @@ module.exports = function() {
     var router = express.Router();
 
     // Helper method to get user by email
-    function getUserByEmail(db, email, callback) {
+    function GetUserByEmailAndPassword(db, email, password, callback) {
         var query = {
-            sql: 'GetUserByEmail @email',
+            sql: 'GetUserByEmailAndPassword @email, @password',
             parameters: [
-                { name: 'email', value: email }
+                { name: 'email', value: email },
+                { name: 'password', value: password }
             ]
         };
         db.execute(query)
@@ -159,7 +160,7 @@ module.exports = function() {
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
-        getUserByEmail(db, req.body.email, function(results, err) {
+        GetUserByEmailAndPassword(db, req.body.email,utils.md5(req.body.password), function(results, err) {
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -200,38 +201,105 @@ module.exports = function() {
                     res.json({
                         totalRows: results.length,
                         error: '',
-                        data: results
-                    });
-                    // After creating the new user in db, we have to send an email to confirm the registry
-                    var from = "hello@icango.com";
-                    var to = req.body.email;
-                    var subject = "Please, confirm your email address";
-                    var body = "Hi";
-                    body += " " + req.body.firstName + " " + req.body.lastName;
-                    body += "<br> Please confirm to email address <a href='" + process.env.API_BASE_URL + "users/confirm/" + results[0].id  + "'>here</a>";
-                    utils.sendEmail(from, to, subject, body, function(emailReponse) {
-                        if (emailReponse.statusCode !== 202) {
-                            console.log('CreateUser - send email confirmation error: ', emailReponse);             
-                        } 
-                    });
-                }
-                else {
+                            data: results
+                        });
+                        // After creating the new user in db, we have to send an email to confirm the registry
+                        var from = "hello@icango.com";
+                        var to = req.body.email;
+                        var subject = "Please, confirm your email address";
+                        var body = "Hi";
+                        body += " " + req.body.firstName + " " + req.body.lastName;
+                        body += "<br> Please confirm to email address <a href='" + process.env.API_BASE_URL + "users/confirm/" + results[0].id  + "'>here</a>";
+                        utils.sendEmail(from, to, subject, body, function(emailReponse) {
+                            if (emailReponse.statusCode !== 202) {
+                                console.log('CreateUser - send email confirmation error: ', emailReponse);             
+                            } 
+                        });
+                    }
+                    else {
+                        res.json({
+                            totalRows: 0,
+                            error: 'No data found',
+                            data: {}
+                        });
+                    }
+                })
+                .catch(function (err) {
+                   //res.json(400, err);
                     res.json({
                         totalRows: 0,
-                        error: 'No data found',
+                        error: err,
                         data: {}
                     });
-                }
-            })
-            .catch(function (err) {
-               //res.json(400, err);
+                });
+            });
+    });
+    
+    // Modify profile user
+    router.put('/:id', function(req, res, next) {
+        
+        var id = req.params.id;
+        var db = req.azureMobile.data;
+        GetUserByEmailAndPassword(db, req.body.email, utils.md5(req.body.oldPassword), function(results, err) {
+            if (err) {
+                //res.json(400,err);
                 res.json({
                     totalRows: 0,
                     error: err,
                     data: {}
                 });
+                return;
+            }
+
+            if (err || (results && results.length == 0)) {
+                res.json({
+                    totalRows: 0,
+                    error: err || 'User not found.',
+                    data: {}
+                });
+
+                return;
+            }
+
+            var query = {
+                sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences',
+                parameters: [
+                    { name: 'id', value: id },
+                    { name: 'password', value: utils.md5(req.body.password) },
+                    { name: 'firstName', value: req.body.firstName },
+                    { name: 'lastName', value: req.body.lastName },
+                    { name: 'photoUrl', value: req.body.photoUrl },
+                    { name: 'searchPreferences', value: req.body.searchPreferences }
+                ]
+            };
+
+            db.execute(query)
+            .then(function (results) {
+                if (results.length > 0) {
+                    res.json({
+                        totalRows: results.length,
+                        error: '',
+                            data: results
+                        });
+                        // After updating the user data in db, we have to send an email to user
+                    }
+                    else {
+                        res.json({
+                            totalRows: 0,
+                            error: 'No data found',
+                            data: {}
+                        });
+                    }
+                })
+                .catch(function (err) {
+                   //res.json(400, err);
+                    res.json({
+                        totalRows: 0,
+                        error: err,
+                        data: {}
+                    });
+                });
             });
-        });
     });
 
     return router;
