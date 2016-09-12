@@ -238,6 +238,14 @@ module.exports = function() {
     // Modify profile user
     router.put('/:id', function(req, res, next) {
         
+		if (!utils.validateParam({ 'name': 'firstName', 'value': req.body.firstName }, res)) return;
+		if (!utils.validateParam({ 'name': 'lastName', 'value': req.body.lastName }, res)) return;
+		if (!utils.validateParam({ 'name': 'searchPreferences', 'value': req.body.searchPreferences }, res)) return;
+		if (!utils.validateParam({ 'name': 'oldPassword', 'value': req.body.oldPassword }, res)) return;
+		if (!utils.validateParam({ 'name': 'password', 'value': req.body.password }, res)) return;
+		if (!utils.validateParam({ 'name': 'photoUrl', 'value': req.body.photoUrl }, res)) return;
+		if (!utils.validateParam({ 'name': 'email', 'value': req.body.email }, res)) return;
+		
         var id = req.params.id;
         var db = req.azureMobile.data;
         GetUserByEmailAndPassword(db, req.body.email, utils.md5(req.body.oldPassword), function(results, err) {

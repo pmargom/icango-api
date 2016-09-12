@@ -28,5 +28,16 @@ module.exports = {
 			*/
 			callback(response);
 		});
+	},
+	validateParam: function(param, res) {
+        if (param.value === undefined) {
+            res.status(400).json({
+                    totalRows: 0,
+                    error: param.name + " param is missing",
+                    data: {}
+                });
+           return false;
+        }
+		return true;
 	}
 };
