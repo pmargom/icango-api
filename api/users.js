@@ -5,23 +5,6 @@ var utils = require('./utils');
 module.exports = function() {
     var router = express.Router();
 
-    // Helper method to get user by email
-    function GetUserByEmail(db, email, callback) {
-        var query = {
-            sql: 'GetUserByEmail @email',
-            parameters: [
-                { name: 'email', value: email }
-            ]
-        };
-        db.execute(query)
-        .then(function (results) {
-            callback(results, null);
-        })
-        .catch(function(err) {
-            callback(null, err);
-        });
-    }
-
     // Get all users
     router.get('/', function(req, res, next) {
         var query = {
@@ -159,7 +142,7 @@ module.exports = function() {
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
-        GetUserByEmail(db, req.body.email, function(results, err) {
+        utils.GetUserByEmail(db, req.body.email, function(results, err) {
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -238,16 +221,13 @@ module.exports = function() {
     router.put('/:id', function(req, res, next) {
         
 		if (!utils.validateParam({ 'name': 'email', 'value': req.body.email }, res)) return;
-//      if (!utils.validateParam({ 'name': 'firstName', 'value': req.body.firstName }, res)) return;
-//      if (!utils.validateParam({ 'name': 'lastName', 'value': req.body.lastName }, res)) return;
-//		if (!utils.validateParam({ 'name': 'searchPreferences', 'value': req.body.searchPreferences }, res)) return;
-//		if (!utils.validateParam({ 'name': 'oldPassword', 'value': req.body.oldPassword }, res)) return;
-//		if (!utils.validateParam({ 'name': 'password', 'value': req.body.password }, res)) return;
-//		if (!utils.validateParam({ 'name': 'photoUrl', 'value': req.body.photoUrl }, res)) return;
+        if ((req.body.oldPassword === undefined) && (req.body.password !== undefined)) {
+            return utils.validateParam({ 'name': 'oldPassword', 'value': req.body.oldPassword }, res);
+        }
 		
         var id = req.params.id;
         var db = req.azureMobile.data;
-        GetUserByEmail(db, req.body.email, function(results, err) {
+        utils.GetUserByEmail(db, req.body.email, function(results, err) {
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -267,8 +247,11 @@ module.exports = function() {
 
                 return;
             }
-            //console.log('Results: ', results[0]);
+
             var params = {
+                oldPassword: req.body.oldPassword !== undefined ? utils.md5(req.body.oldPassword) : req.body.oldPassword ,
+                passwordInD: results[0].password,
+                passEquals: utils.md5(req.body.oldPassword) !== results[0].password,
                 password : req.body.password !== undefined ? utils.md5(req.body.password) : results[0].password,
                 firstName : req.body.firstName || results[0].firstName,
                 lastName : req.body.lastName || results[0].lastName,
@@ -276,14 +259,26 @@ module.exports = function() {
                 searchPreferences : req.body.searchPreferences || results[0].searchPreferences
             };
             
-            /*res.status(400).json({
+            if ((params.oldPassword !== undefined) && (params.oldPassword !== results[0].password)) {
+            
+                res.json({
+                    totalRows: 0,
+                    error: err || 'User not found.',
+                    data: {}
+                });
+                return;
+            }
+            
+            /*
+            res.status(400).json({
                 totalRows: 0,
                 error: "PMG: work in progress",
                 params: params,
                 data: results[0]
-            });*/
+            });
             
-            //return;
+            return;
+            */
             
             var query = {
                 sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences',

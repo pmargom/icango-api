@@ -39,5 +39,36 @@ module.exports = {
            return false;
         }
 		return true;
-	}
+	},
+	GetUserByEmail: function GetUserByEmail(db, email, callback) {
+        var query = {
+            sql: 'GetUserByEmail @email',
+            parameters: [
+                { name: 'email', value: email }
+            ]
+        };
+        db.execute(query)
+        .then(function (results) {
+            callback(results, null);
+        })
+        .catch(function(err) {
+            callback(null, err);
+        });
+    },
+	GetUserByEmailAndPassword: function GetUserByEmail(db, email, password, callback) {
+        var query = {
+            sql: 'GetUserByEmailAndPassword @email, @password',
+            parameters: [
+                { name: 'email', value: email },
+				{ name: 'password', value: password }
+            ]
+        };
+        db.execute(query)
+        .then(function (results) {
+            callback(results, null);
+        })
+        .catch(function(err) {
+            callback(null, err);
+        });
+    }
 };
