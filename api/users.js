@@ -6,12 +6,11 @@ module.exports = function() {
     var router = express.Router();
 
     // Helper method to get user by email
-    function GetUserByEmailAndPassword(db, email, password, callback) {
+    function GetUserByEmail(db, email, callback) {
         var query = {
-            sql: 'GetUserByEmailAndPassword @email, @password',
+            sql: 'GetUserByEmail @email',
             parameters: [
-                { name: 'email', value: email },
-                { name: 'password', value: password }
+                { name: 'email', value: email }
             ]
         };
         db.execute(query)
@@ -160,7 +159,7 @@ module.exports = function() {
     // Create user
     router.post('/', function(req, res, next) {
         var db = req.azureMobile.data;
-        GetUserByEmailAndPassword(db, req.body.email,utils.md5(req.body.password), function(results, err) {
+        GetUserByEmail(db, req.body.email, function(results, err) {
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -238,17 +237,17 @@ module.exports = function() {
     // Modify profile user
     router.put('/:id', function(req, res, next) {
         
-		if (!utils.validateParam({ 'name': 'firstName', 'value': req.body.firstName }, res)) return;
-		if (!utils.validateParam({ 'name': 'lastName', 'value': req.body.lastName }, res)) return;
-		if (!utils.validateParam({ 'name': 'searchPreferences', 'value': req.body.searchPreferences }, res)) return;
-		if (!utils.validateParam({ 'name': 'oldPassword', 'value': req.body.oldPassword }, res)) return;
-		if (!utils.validateParam({ 'name': 'password', 'value': req.body.password }, res)) return;
-		if (!utils.validateParam({ 'name': 'photoUrl', 'value': req.body.photoUrl }, res)) return;
 		if (!utils.validateParam({ 'name': 'email', 'value': req.body.email }, res)) return;
+//      if (!utils.validateParam({ 'name': 'firstName', 'value': req.body.firstName }, res)) return;
+//      if (!utils.validateParam({ 'name': 'lastName', 'value': req.body.lastName }, res)) return;
+//		if (!utils.validateParam({ 'name': 'searchPreferences', 'value': req.body.searchPreferences }, res)) return;
+//		if (!utils.validateParam({ 'name': 'oldPassword', 'value': req.body.oldPassword }, res)) return;
+//		if (!utils.validateParam({ 'name': 'password', 'value': req.body.password }, res)) return;
+//		if (!utils.validateParam({ 'name': 'photoUrl', 'value': req.body.photoUrl }, res)) return;
 		
         var id = req.params.id;
         var db = req.azureMobile.data;
-        GetUserByEmailAndPassword(db, req.body.email, utils.md5(req.body.oldPassword), function(results, err) {
+        GetUserByEmail(db, req.body.email, function(results, err) {
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -268,16 +267,33 @@ module.exports = function() {
 
                 return;
             }
-
+            //console.log('Results: ', results[0]);
+            var params = {
+                password : req.body.password !== undefined ? utils.md5(req.body.password) : results[0].password,
+                firstName : req.body.firstName || results[0].firstName,
+                lastName : req.body.lastName || results[0].lastName,
+                photoUrl : req.body.photoUrl || results[0].photoUrl,
+                searchPreferences : req.body.searchPreferences || results[0].searchPreferences
+            };
+            
+            /*res.status(400).json({
+                totalRows: 0,
+                error: "PMG: work in progress",
+                params: params,
+                data: results[0]
+            });*/
+            
+            //return;
+            
             var query = {
                 sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences',
                 parameters: [
                     { name: 'id', value: id },
-                    { name: 'password', value: utils.md5(req.body.password) },
-                    { name: 'firstName', value: req.body.firstName },
-                    { name: 'lastName', value: req.body.lastName },
-                    { name: 'photoUrl', value: req.body.photoUrl },
-                    { name: 'searchPreferences', value: req.body.searchPreferences }
+                    { name: 'password', value: params.password },
+                    { name: 'firstName', value: params.firstName },
+                    { name: 'lastName', value: params.lastName },
+                    { name: 'photoUrl', value: params.photoUrl },
+                    { name: 'searchPreferences', value: params.searchPreferences }
                 ]
             };
 
