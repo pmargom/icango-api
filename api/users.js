@@ -120,15 +120,27 @@ module.exports = function() {
       req.azureMobile.data.execute(query)
             .then(function (results) {
 
-           if (results.length > 0)
-               res.json({
+           if (results.length > 0) {
+               /*res.json({
                   totalRows: 1,
                   page: 1,
                   rows: 1,
                   error: '',
-                  data: results
+                  data: [
+                      {
+                          message: 'Your registration was confirmed successfully.'
+                      }
+                  ]
                });
-            else
+               */
+               res.writeHead(301,
+                   {
+                       Location: 'https://icangoweb-develop.azurewebsites.net/#/login'
+                   });
+               res.end();
+            }
+            else {
+                /*
                res.json({
                   totalRows: 0,
                   page: 0,
@@ -136,7 +148,14 @@ module.exports = function() {
                   error: 'Error during email confirmation process.',
                   data: {}
                });
-            });        
+               */
+               res.writeHead(301,
+                   {
+                       Location: 'https://icangoweb-develop.azurewebsites.net/#/confirmaton-failed'
+                   });
+               res.end();
+            }
+        });        
     });
     
     // Create user
@@ -183,7 +202,11 @@ module.exports = function() {
                     res.json({
                         totalRows: results.length,
                         error: '',
-                            data: results
+                            data: [
+                                {
+                                    message: 'We sent you an email to confirm your registry.'
+                                }
+                            ]
                         });
                         // After creating the new user in db, we have to send an email to confirm the registry
                         var from = "hello@icango.com";
@@ -195,6 +218,9 @@ module.exports = function() {
                         utils.sendEmail(from, to, subject, body, function(emailReponse) {
                             if (emailReponse.statusCode !== 202) {
                                 console.log('CreateUser - send email confirmation error: ', emailReponse);             
+                            }
+                            else {
+                                //console.error('emailReponse: ', emailReponse);
                             } 
                         });
                     }
