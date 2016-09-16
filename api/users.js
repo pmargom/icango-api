@@ -263,7 +263,7 @@ module.exports = function() {
             
                 res.json({
                     totalRows: 0,
-                    error: err || 'User not found.',
+                    error: err || 'Old password are incorrect.',
                     data: {}
                 });
                 return;
