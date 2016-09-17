@@ -254,6 +254,7 @@ module.exports = function() {
         var id = req.params.id;
         var db = req.azureMobile.data;
         utils.GetUserByEmail(db, req.body.email, function(results, err) {
+            
             if (err) {
                 //res.json(400,err);
                 res.json({
@@ -263,7 +264,7 @@ module.exports = function() {
                 });
                 return;
             }
-
+            
             if (err || (results && results.length == 0)) {
                 res.json({
                     totalRows: 0,
@@ -275,27 +276,38 @@ module.exports = function() {
             }
 
             var params = {
-                oldPassword: req.body.oldPassword !== undefined ? utils.md5(req.body.oldPassword) : req.body.oldPassword ,
-                passwordInD: results[0].password,
-                passEquals: utils.md5(req.body.oldPassword) !== results[0].password,
-                password : req.body.password !== undefined ? utils.md5(req.body.password) : results[0].password,
+                oldPassword: req.body.oldPassword !== undefined ? utils.md5(req.body.oldPassword) : null,
+                password : (req.body.password !== undefined ? utils.md5(req.body.password) : results[0].password),
                 firstName : req.body.firstName || results[0].firstName,
                 lastName : req.body.lastName || results[0].lastName,
                 photoUrl : req.body.photoUrl || results[0].photoUrl,
                 searchPreferences : req.body.searchPreferences || results[0].searchPreferences
             };
             
-            if ((params.oldPassword !== undefined) && (params.oldPassword !== results[0].password)) {
+            /*var oldP = '$' + req.body.oldPassword + '$';
+            res.json(
+                {
+                    oldP: oldP,
+                    val: req.body.oldPassword === undefined,
+                    val3: results && results.length == 0,
+                    val4: (req.body.oldPassword + '') === 'undefined',
+                    //err: err || 'User not found.',
+                    results: results,
+                    params: params
+                });             
+            return;*/
+            
+            if ((params.oldPassword) && (params.oldPassword !== results[0].password)) {
             
                 res.json({
                     totalRows: 0,
-                    error: err || 'Old password are incorrect.',
+                    error: 'Old password are incorrect.',
                     data: {}
                 });
                 return;
             }
             
-            /*
+  /*          
             res.status(400).json({
                 totalRows: 0,
                 error: "PMG: work in progress",
@@ -304,8 +316,8 @@ module.exports = function() {
             });
             
             return;
-            */
-            
+ */           
+
             var query = {
                 sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences',
                 parameters: [
