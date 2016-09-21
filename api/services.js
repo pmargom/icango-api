@@ -25,23 +25,39 @@ module.exports = function() {
    // Get all services
    router.get('/', function(req, res, next) {
 
-      var page = req.query.page;
-      var rows = req.query.rows;
-      var status = req.query.status;
+      var page = req.query.page || null;
+      var rows = req.query.rows || null;
+      var status = req.query.status || null;
+      var latitude = req.query.latitude || null;
+      var longitude = req.query.longitude || null;
+      var distance = req.query.distance || null;
+      var searchText = req.query.searchText || null;
+      var deleted = req.query.deleted || null;
+      var dateFrom = req.query.dateFrom || null;
+      var dateTo = req.query.dateTo || null;
+      var priceFrom = req.query.priceFrom || null;
+      var priceTo = req.query.priceTo || null;
       
-      var latitude = null;
-      if (req.query.latitude !== '') latitude = req.query.latitude;
-      var longitude = null;
-      if (req.query.longitude !== '') longitude = req.query.longitude;
-      var distance = null;
-      if (req.query.distance !== '') distance = req.query.distance;
-      var deleted = null;
-      if (req.query.deleted !== '') deleted = req.query.deleted;
+      /*res.json({
+            page: req.query.page || null,
+            rows: req.query.rows || null,
+            status: req.query.status || null,
+            latitude: req.query.latitude || null,
+            longitude: req.query.longitude || null,
+            distance: req.query.distance || null,
+            searchText: req.query.searchText || null,
+            deleted: req.query.deleted || null,
+            dateTo: req.query.dateTo || null,
+            dateFrom: req.query.dateFrom || null,
+            priceFrom: req.query.priceFrom || null,
+            priceTo: req.query.priceTo || null
+      });
       
-      var searchText = req.query.searchText;
+      return;
+      */
 
       var query = {
-         sql: 'GetServices @status, @page, @rows, @latitude, @longitude, @distance, @searchText, @deleted',
+         sql: 'GetServices @status, @page, @rows, @latitude, @longitude, @distance, @searchText, @deleted, @dateFrom, @dateTo, @priceFrom, @priceTo',
          parameters: [
             { name: 'status', value: status },
             { name: 'page', value: page },
@@ -50,7 +66,11 @@ module.exports = function() {
             { name: 'longitude', value: longitude },
             { name: 'distance', value: distance },
             { name: 'searchText', value: searchText },
-            { name: 'deleted', value: deleted }
+            { name: 'deleted', value: deleted },
+            { name: 'dateFrom', value: dateFrom },
+            { name: 'dateTo', value: dateTo },
+            { name: 'priceFrom', value: priceFrom },
+            { name: 'priceTo', value: priceTo },
          ],
          multiple: true // this allows to receive multiple resultsets
       };
