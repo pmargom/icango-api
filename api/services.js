@@ -70,7 +70,7 @@ module.exports = function() {
             { name: 'dateFrom', value: dateFrom },
             { name: 'dateTo', value: dateTo },
             { name: 'priceFrom', value: priceFrom },
-            { name: 'priceTo', value: priceTo },
+            { name: 'priceTo', value: priceTo }
          ],
          multiple: true // this allows to receive multiple resultsets
       };

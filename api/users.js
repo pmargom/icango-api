@@ -7,27 +7,42 @@ module.exports = function() {
 
     // Get all users
     router.get('/', function(req, res, next) {
+        
+        var page = req.query.page || null;
+        var rows = req.query.rows || null;
+        var status = req.query.status || null;
+        var deleted = req.query.deleted || null;
+        
         var query = {
-            sql: 'GetUsers',
-            parameters: []
+            sql: 'GetUsers @status, @page, @rows, @deleted',
+            parameters: [
+                { name: 'status', value: status },
+                { name: 'page', value: page },
+                { name: 'rows', value: rows },
+                { name: 'deleted', value: deleted }
+            ],
+            multiple: true // this allows to receive multiple resultsets
         };
 
         req.azureMobile.data.execute(query)
-           .then(function (results) {
-
+         .then(function (results) {
             if (results.length > 0)
-                res.json({
-                   totalRows: results.length,
-                   error: '',
-                   data: results
-                });
-            else 
-                res.json({
-                    totalRows: 0,
-                    error: 'No data found', 
-                    data: {}
-                });               
-           });
+               res.json({
+                  totalRows: results[0][0].totalRows,
+                  page: page,
+                  rows: rows,
+                  error: '',
+                  data: results[1]
+               });
+            else
+               res.json({
+                  totalRows: 0,
+                  page: 0,
+                  rows: 0,
+                  error: 'No data found',
+                  data: {}
+               });
+         });
     });
 
     // Get user by Id
