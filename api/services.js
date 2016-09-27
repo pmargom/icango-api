@@ -38,19 +38,20 @@ module.exports = function() {
       var priceFrom = req.query.priceFrom || null;
       var priceTo = req.query.priceTo || null;
       
-      /*res.json({
-            page: req.query.page || null,
-            rows: req.query.rows || null,
-            status: req.query.status || null,
-            latitude: req.query.latitude || null,
-            longitude: req.query.longitude || null,
-            distance: req.query.distance || null,
-            searchText: req.query.searchText || null,
-            deleted: req.query.deleted || null,
-            dateTo: req.query.dateTo || null,
-            dateFrom: req.query.dateFrom || null,
-            priceFrom: req.query.priceFrom || null,
-            priceTo: req.query.priceTo || null
+      /*
+      res.json({
+            page: page,
+            rows: rows,
+            status: status,
+            latitude: latitude,
+            longitude: longitude,
+            distance: distance,
+            searchText: searchText,
+            deleted: deleted,
+            dateTo: dateTo,
+            dateFrom: dateFrom,
+            priceFrom: priceFrom,
+            priceTo: priceTo
       });
       
       return;
@@ -77,6 +78,7 @@ module.exports = function() {
 
       req.azureMobile.data.execute(query)
          .then(function (results) {
+            
             if (results.length > 0)
                res.json({
                   totalRows: results[0][0].totalRows,
