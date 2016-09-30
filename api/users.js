@@ -47,10 +47,22 @@ module.exports = function() {
 
     // Get user by Id
     router.get('/:id', function(req, res, next) {
+        
+        var status = req.query.status || null;
+        var deleted = req.query.deleted || null;
+        
+        /*res.json({
+            status: status,
+            id: req.params.id
+        });
+        return;*/
+        
         var query = {
-            sql: 'GetUserById @id',
+            sql: 'GetUserById @id, @status, @deleted',
             parameters: [
-                { name: 'id', value: req.params.id }
+                { name: 'id', value: req.params.id },
+                { name: 'status', value: status },
+                { name: 'deleted', value: deleted }
             ]
         };
         req.azureMobile.data.execute(query)
@@ -290,16 +302,27 @@ module.exports = function() {
                 return;
             }
 
+            var status = undefined;
+            if (req.body.status !== undefined) {
+                if (req.body.status === "1") {
+                    status = true;
+                }
+                else {
+                    status = false;
+                }
+            }
             var params = {
                 oldPassword: req.body.oldPassword !== undefined ? utils.md5(req.body.oldPassword) : null,
                 password : (req.body.password !== undefined ? utils.md5(req.body.password) : results[0].password),
                 firstName : req.body.firstName || results[0].firstName,
                 lastName : req.body.lastName || results[0].lastName,
                 photoUrl : req.body.photoUrl || results[0].photoUrl,
-                searchPreferences : req.body.searchPreferences || results[0].searchPreferences
+                searchPreferences : req.body.searchPreferences || results[0].searchPreferences,
+                status: status || results[0].status 
+                //status: req.body.status !== undefined
             };
-            
-            /*var oldP = '$' + req.body.oldPassword + '$';
+            /*
+            var oldP = '$' + req.body.oldPassword + '$';
             res.json(
                 {
                     oldP: oldP,
@@ -310,7 +333,8 @@ module.exports = function() {
                     results: results,
                     params: params
                 });             
-            return;*/
+            return;
+            */
             
             if ((params.oldPassword) && (params.oldPassword !== results[0].password)) {
             
@@ -334,14 +358,15 @@ module.exports = function() {
  */           
 
             var query = {
-                sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences',
+                sql: 'UpdateUser @id, @password, @firstName, @lastName, @photoUrl, @searchPreferences, @status',
                 parameters: [
                     { name: 'id', value: id },
                     { name: 'password', value: params.password },
                     { name: 'firstName', value: params.firstName },
                     { name: 'lastName', value: params.lastName },
                     { name: 'photoUrl', value: params.photoUrl },
-                    { name: 'searchPreferences', value: params.searchPreferences }
+                    { name: 'searchPreferences', value: params.searchPreferences },
+                    { name: 'status', value: params.status }
                 ]
             };
 
@@ -373,6 +398,43 @@ module.exports = function() {
                 });
             });
     });
+    
+    // Delete user
+    router.delete('/:id', function(req, res, next) {
+        var id = req.params.id;
+        
+        var query = {
+            sql: 'DeleteUser @id',
+            parameters: [
+                { name: 'id', value: id }
+            ]
+        };
+    
+        var db = req.azureMobile.data;
+        db.execute(query)
+        .then(function (results) {
+            if (results.length > 0)
+                res.json({
+                    totalRows: results.length,
+                    error: '',
+                    data: results
+                });
+            else
+                res.json({
+                    totalRows: 0,
+                    error: 'No data found',
+                    data: {}
+                });
+        })
+        .catch(function (err) {
+            //res.json(400, err);
+            res.json({
+                totalRows: 0,
+                error: err,
+                data: {}
+            });
+        });
+    });   
 
     return router;
 };
